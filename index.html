@@ -389,19 +389,63 @@
             display: block;
         }
         
-        /* Image Viewer */
+        /* Image Viewer with Swipe Navigation */
         .image-viewer-content {
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100%;
             width: 100%;
+            position: relative;
         }
         
         #expanded-img {
             max-width: 100%;
             max-height: 90vh;
             object-fit: contain;
+            transition: transform 0.3s ease;
+        }
+        
+        .nav-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 3rem;
+            color: white;
+            cursor: pointer;
+            background-color: rgba(0, 0, 0, 0.5);
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            z-index: 10;
+            user-select: none;
+        }
+        
+        .nav-arrow:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+        
+        .prev-arrow {
+            left: 20px;
+        }
+        
+        .next-arrow {
+            right: 20px;
+        }
+        
+        .image-counter {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 1rem;
         }
         
         /* Floating Social Widget */
@@ -532,6 +576,12 @@
                 flex-direction: column;
                 gap: 20px;
             }
+            
+            .nav-arrow {
+                width: 40px;
+                height: 40px;
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -624,7 +674,6 @@
     <footer id="contact">
         <p>Contact us: info@syncpathexpeditions.com | +254 (794) 521-982</p>
         <p>&copy; 2025 SyncPath Expeditions. All rights reserved.</p>
-        
     </footer>
 
     <!-- About Us Modal -->
@@ -633,7 +682,7 @@
             <span class="close-btn">&times;</span>
             <div class="modal-body">
                 <h2>About SyncPath Expeditions</h2>
-                <p>Founded in 2010, Nomad Natives Tours has been creating unforgettable travel experiences for over a decade. Our team of passionate travel experts is dedicated to crafting unique journeys that connect you with the world's most beautiful destinations.</p>
+                <p>Founded in 2010, SyncPath Expeditions has been creating unforgettable travel experiences for over a decade. Our team of passionate travel experts is dedicated to crafting unique journeys that connect you with the world's most beautiful destinations.</p>
                 
                 <div style="display: flex; gap: 30px; margin: 30px 0;">
                     <div style="flex: 1;">
@@ -693,11 +742,14 @@
         </div>
     </div>
 
-    <!-- Image Viewer Modal -->
+    <!-- Image Viewer Modal with Swipe Navigation -->
     <div id="image-viewer" class="modal">
         <span class="close-btn">&times;</span>
         <div class="image-viewer-content">
+            <div class="nav-arrow prev-arrow">&#10094;</div>
             <img id="expanded-img">
+            <div class="nav-arrow next-arrow">&#10095;</div>
+            <div class="image-counter" id="image-counter"></div>
         </div>
     </div>
 
@@ -762,7 +814,7 @@
             <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
             <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
             <a href="https://whatsapp.com" target="_blank"><i class="fab fa-whatsapp"></i></a>
-            <a href="mailto:info@nomadnatives.com" target="_blank"><i class="fas fa-envelope"></i></a>
+            <a href="mailto:info@syncpathexpeditions.com" target="_blank"><i class="fas fa-envelope"></i></a>
         </div>
     </div>
 
@@ -841,18 +893,90 @@
             }
         });
         
-        // Gallery image click functionality
+        // Gallery image click functionality with swipe navigation
         const galleryItems = document.querySelectorAll('.gallery-item img');
         const expandedImg = document.getElementById('expanded-img');
+        const prevArrow = document.querySelector('.prev-arrow');
+        const nextArrow = document.querySelector('.next-arrow');
+        const imageCounter = document.getElementById('image-counter');
         
-        galleryItems.forEach(item => {
+        let currentImageIndex = 0;
+        let touchStartX = 0;
+        let touchEndX = 0;
+        
+        // Store all gallery images
+        const galleryImages = Array.from(galleryItems).map(item => ({
+            src: item.src,
+            alt: item.alt
+        }));
+        
+        // Open image viewer
+        galleryItems.forEach((item, index) => {
             item.addEventListener('click', function() {
-                expandedImg.src = this.src;
-                expandedImg.alt = this.alt;
+                currentImageIndex = index;
+                updateImageViewer();
                 imageViewer.style.display = 'block';
                 document.body.style.overflow = 'hidden';
             });
         });
+        
+        // Update image viewer with current image
+        function updateImageViewer() {
+            expandedImg.src = galleryImages[currentImageIndex].src;
+            expandedImg.alt = galleryImages[currentImageIndex].alt;
+            imageCounter.textContent = `${currentImageIndex + 1} / ${galleryImages.length}`;
+        }
+        
+        // Navigation arrows
+        prevArrow.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+            updateImageViewer();
+        });
+        
+        nextArrow.addEventListener('click', () => {
+            currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+            updateImageViewer();
+        });
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (imageViewer.style.display === 'block') {
+                if (e.key === 'ArrowLeft') {
+                    currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                    updateImageViewer();
+                } else if (e.key === 'ArrowRight') {
+                    currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                    updateImageViewer();
+                } else if (e.key === 'Escape') {
+                    imageViewer.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                }
+            }
+        });
+        
+        // Touch events for swipe navigation
+        expandedImg.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, {passive: true});
+        
+        expandedImg.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }, {passive: true});
+        
+        function handleSwipe() {
+            const swipeThreshold = 50; // Minimum swipe distance in pixels
+            
+            if (touchStartX - touchEndX > swipeThreshold) {
+                // Swipe left - next image
+                currentImageIndex = (currentImageIndex + 1) % galleryImages.length;
+                updateImageViewer();
+            } else if (touchEndX - touchStartX > swipeThreshold) {
+                // Swipe right - previous image
+                currentImageIndex = (currentImageIndex - 1 + galleryImages.length) % galleryImages.length;
+                updateImageViewer();
+            }
+        }
         
         // Form submission
         const bookingForm = document.querySelector('.booking-form');
