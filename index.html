@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SyncPath Expeditions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            color: #333;
+            line-height: 1.6;
+            position: relative;
+        }
+        
+        /* Navigation Bar */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 15px 0;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+        
+        .navbar-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+        
+        .logo-img {
+            height: 40px;
+            width: auto;
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+        
+        .nav-links li {
+            margin-left: 30px;
+        }
+        
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            color: #ff6b6b;
+        }
+        
+        .menu-toggle {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), 
+                        url('https://images.unsplash.com/photo-1431274172761-fca41d930114?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 0 20px;
+            color: white;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin-top: 60px;
+        }
+        
+        .hero-logo {
+            height: 80px;
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            background: #ff5252;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Content Sections */
+        .section {
+            padding: 80px 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 2.2rem;
+            color: #333;
+        }
+        
+        .destinations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .destination-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .destination-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .card-image {
+            height: 200px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .card-content {
+            padding: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        /* Footer */
+        footer {
+            background: #222;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+            margin-top: 50px;
+        }
+        
+        .footer-logo {
+            height: 60px;
+            margin-bottom: 20px;
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 2000;
+            overflow: auto;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background-color: #fff;
+            margin: 0 auto;
+            padding: 30px;
+            width: 100%;
+            max-width: 1200px;
+            border-radius: 8px;
+            position: relative;
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .modal-body {
+            flex: 1;
+            overflow-y: auto;
+        }
+        
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 25px;
+            font-size: 28px;
+            font-weight: bold;
+            color: #333;
+            cursor: pointer;
+            z-index: 10;
+        }
+        
+        /* About Us Modal with Sleek Background */
+        #about-modal .modal-content {
+            background: linear-gradient(135deg, rgba(20, 30, 48, 0.9) 0%, rgba(36, 59, 85, 0.9) 100%),
+                        url('https://images.unsplash.com/photo-1483728642387-6c3bdd6c93e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            border: none;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        #about-modal .modal-body {
+            padding: 40px;
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: rgba(0, 0, 0, 0.6);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        #about-modal h2 {
+            font-size: 2.5rem;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #ff6b6b;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        #about-modal h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background: #ff6b6b;
+        }
+
+        #about-modal p {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        #about-modal ul {
+            margin: 25px 0;
+            padding-left: 20px;
+        }
+
+        #about-modal li {
+            margin-bottom: 10px;
+            position: relative;
+            padding-left: 30px;
+            font-size: 1.1rem;
+        }
+
+        #about-modal li::before {
+            content: '\f00c';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            color: #ff6b6b;
+            position: absolute;
+            left: 0;
+            top: 2px;
+        }
+
+        #about-modal .close-btn {
+            color: white;
+            font-size: 32px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+        
+        /* Booking Form */
+        .booking-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .form-group.full-width {
+            grid-column: span 2;
+        }
+        
+        .submit-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s ease;
+        }
+        
+        .submit-btn:hover {
+            background: #ff5252;
+        }
+        
+        /* Gallery Styles */
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .gallery-item {
+            cursor: pointer;
+            overflow: hidden;
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+        
+        .gallery-item:hover {
+            transform: scale(1.03);
+        }
+        
+        .gallery-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        /* Image Viewer */
+        .image-viewer-content {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            width: 100%;
+        }
+        
+        #expanded-img {
+            max-width: 100%;
+            max-height: 90vh;
+            object-fit: contain;
+        }
+        
+        /* Floating Social Widget */
+        .social-widget {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 1000;
+        }
+        
+        .social-icon {
+            background: #ff6b6b;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .social-icon:hover {
+            background: #ff5252;
+            transform: scale(1.1);
+        }
+        
+        .social-panel {
+            position: absolute;
+            right: 0;
+            bottom: 70px;
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        
+        .social-panel.active {
+            display: flex;
+        }
+        
+        .social-panel a {
+            color: #333;
+            font-size: 24px;
+            transition: color 0.3s ease;
+        }
+        
+        .social-panel a:hover {
+            color: #ff6b6b;
+        }
+        
+        /* Gmail icon specific style */
+        .fa-envelope {
+            color: #D44638; /* Gmail red color */
+        }
+        
+        @media (max-width: 768px) {
+            .navbar-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                width: 100%;
+                margin-top: 15px;
+            }
+            
+            .nav-links.active {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                top: 15px;
+                right: 20px;
+            }
+            
+            .hero-logo {
+                height: 60px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            p {
+                font-size: 1rem;
+            }
+            
+            .modal-content {
+                padding: 20px;
+            }
+            
+            .booking-form {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-group.full-width {
+                grid-column: span 1;
+            }
+            
+            .gallery-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            #about-modal .modal-body {
+                padding: 20px;
+            }
+
+            #about-modal h2 {
+                font-size: 1.8rem;
+            }
+
+            #about-modal .modal-body > div {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo-container">
+                <img src="logo1.png" alt="SyncPath Expeditions Logo" class="logo-img">
+                <a href="#" class="logo-text">SyncPath Expeditions</a>
+            </div>
+            <div class="menu-toggle">☰</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#" id="about-link">About Us</a></li>
+                <li><a href="#tours">Tours</a></li>
+                <li><a href="#" id="gallery-link">Gallery</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-content">
+            <img src="logo1.png" alt="SyncPath Expeditions Logo" class="hero-logo">
+            <h1>SyncPath Expeditions</h1>
+            <p>Embark on unforgettable adventures with SyncPath Expeditions. Explore breathtaking destinations, curated tours, and seamless travel experiences. From thrilling excursions to serene beach getaways, we offer expertly crafted trips tailored to your wanderlust.</p>
+            <a href="#" id="book-now-btn" class="cta-button">Book Your Adventure Today</a>
+        </div>
+    </section>
+
+    <!-- Destinations Section -->
+    <section class="section" id="destinations">
+        <h2 class="section-title">Popular Destinations</h2>
+        <div class="destinations">
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1503917988258-f87a78e3c995?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mountain Adventure" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Mountain Adventures</h3>
+                    <p>Experience breathtaking peaks and challenging trails with our expert guides.</p>
+                </div>
+            </div>
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Beach Getaway" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Beach Getaways</h3>
+                    <p>Relax on pristine beaches with our all-inclusive resort packages.</p>
+                </div>
+            </div>
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cultural Tours" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Cultural Tours</h3>
+                    <p>Immerse yourself in rich history and traditions with our local experts.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tours Section -->
+    <section class="section" id="tours">
+        <h2 class="section-title">Featured Tours</h2>
+        <div class="destinations">
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Safari Tour" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Wildlife Safari</h3>
+                    <p>7-day adventure through national parks with professional wildlife guides.</p>
+                </div>
+            </div>
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1473625247510-8ceb1760943f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="City Tour" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">European Capitals</h3>
+                    <p>14-day tour of Europe's most iconic cities with luxury accommodations.</p>
+                </div>
+            </div>
+            <div class="destination-card">
+                <img src="https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Hiking Tour" class="card-image">
+                <div class="card-content">
+                    <h3 class="card-title">Hiking Expedition</h3>
+                    <p>10-day guided hiking tour through scenic mountain trails.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="contact">
+        <p>Contact us: info@syncpathexpeditions.com | +254 (794) 521-982</p>
+        <p>&copy; 2025 SyncPath Expeditions. All rights reserved.</p>
+        
+    </footer>
+
+    <!-- About Us Modal -->
+    <div id="about-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-body">
+                <h2>About SyncPath Expeditions</h2>
+                <p>Founded in 2010, Nomad Natives Tours has been creating unforgettable travel experiences for over a decade. Our team of passionate travel experts is dedicated to crafting unique journeys that connect you with the world's most beautiful destinations.</p>
+                
+                <div style="display: flex; gap: 30px; margin: 30px 0;">
+                    <div style="flex: 1;">
+                        <h3 style="color: #ff6b6b; margin-bottom: 15px;">Our Story</h3>
+                        <p>What began as a small group of travel enthusiasts has grown into a premier tour company with operations across three continents. We've stayed true to our roots while expanding our horizons.</p>
+                    </div>
+                    <div style="flex: 1;">
+                        <h3 style="color: #ff6b6b; margin-bottom: 15px;">Our Team</h3>
+                        <p>Our guides average 10+ years of experience and speak 8 languages collectively. We're proud to employ local experts in every destination we operate.</p>
+                    </div>
+                </div>
+
+                <h3 style="text-align: center; color: #ff6b6b; margin: 30px 0 20px;">We Specialize In:</h3>
+                <ul>
+                    <li>Customized travel itineraries tailored to your preferences</li>
+                    <li>Luxury adventure tours with premium accommodations</li>
+                    <li>Authentic cultural immersion experiences</li>
+                    <li>Sustainable and eco-friendly travel practices</li>
+                    <li>Off-the-beaten-path destinations</li>
+                    <li>Group and private tour options</li>
+                </ul>
+                
+                <p style="text-align: center; font-style: italic; margin-top: 30px;">
+                    "Our mission is to help you discover the world while preserving its natural beauty and cultural heritage for future generations."
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gallery Modal -->
+    <div id="gallery-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-body">
+                <h2>Our Gallery</h2>
+                <div class="gallery-grid">
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1503917988258-f87a78e3c995?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Mountain Adventure">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Beach Getaway">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1467269204594-9661b134dd2b?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Cultural Tour">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1464037866556-6812c9d1c72e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Wildlife Safari">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1473625247510-8ceb1760943f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="European Tour">
+                    </div>
+                    <div class="gallery-item">
+                        <img src="https://images.unsplash.com/photo-1506197603052-3cc9c3a201bd?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80" alt="Hiking Expedition">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Viewer Modal -->
+    <div id="image-viewer" class="modal">
+        <span class="close-btn">&times;</span>
+        <div class="image-viewer-content">
+            <img id="expanded-img">
+        </div>
+    </div>
+
+    <!-- Booking Form Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <div class="modal-body">
+                <h2>Book Your Adventure</h2>
+                <form class="booking-form">
+                    <div class="form-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" name="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="tour">Select Tour</label>
+                        <select id="tour" name="tour" required>
+                            <option value="">-- Choose a Tour --</option>
+                            <option value="mountain">Mountain Adventures</option>
+                            <option value="beach">Beach Getaways</option>
+                            <option value="cultural">Cultural Tours</option>
+                            <option value="safari">Wildlife Safari</option>
+                            <option value="europe">European Capitals</option>
+                            <option value="hiking">Hiking Expedition</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">Preferred Date</label>
+                        <input type="date" id="date" name="date" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="people">Number of People</label>
+                        <input type="number" id="people" name="people" min="1" required>
+                    </div>
+                    <div class="form-group full-width">
+                        <label for="message">Special Requests</label>
+                        <textarea id="message" name="message" rows="4"></textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <button type="submit" class="submit-btn">Submit Booking Request</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Social Widget -->
+    <div class="social-widget">
+        <div class="social-icon" id="social-icon">
+            <i class="fas fa-comment-dots"></i>
+        </div>
+        <div class="social-panel" id="social-panel">
+            <a href="https://facebook.com" target="_blank"><i class="fab fa-facebook"></i></a>
+            <a href="https://instagram.com" target="_blank"><i class="fab fa-instagram"></i></a>
+            <a href="https://twitter.com" target="_blank"><i class="fab fa-twitter"></i></a>
+            <a href="https://whatsapp.com" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            <a href="mailto:info@nomadnatives.com" target="_blank"><i class="fas fa-envelope"></i></a>
+        </div>
+    </div>
+
+    <script>
+        // Mobile menu toggle
+        const menuToggle = document.querySelector('.menu-toggle');
+        const navLinks = document.querySelector('.nav-links');
+        
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
+        
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                if(this.getAttribute('href') !== '#') {
+                    e.preventDefault();
+                    document.querySelector(this.getAttribute('href')).scrollIntoView({
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Navbar background change on scroll
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.style.background = '#222';
+            } else {
+                navbar.style.background = 'rgba(0, 0, 0, 0.8)';
+            }
+        });
+        
+        // Modal functionality
+        const aboutLink = document.getElementById('about-link');
+        const galleryLink = document.getElementById('gallery-link');
+        const bookNowBtn = document.getElementById('book-now-btn');
+        
+        const aboutModal = document.getElementById('about-modal');
+        const galleryModal = document.getElementById('gallery-modal');
+        const bookingModal = document.getElementById('booking-modal');
+        const imageViewer = document.getElementById('image-viewer');
+        
+        const closeBtns = document.querySelectorAll('.close-btn');
+        
+        aboutLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            aboutModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        galleryLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            galleryModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        bookNowBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            bookingModal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        });
+        
+        closeBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                this.closest('.modal').style.display = 'none';
+                document.body.style.overflow = 'auto';
+            });
+        });
+        
+        window.addEventListener('click', (e) => {
+            if (e.target.classList.contains('modal')) {
+                e.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        });
+        
+        // Gallery image click functionality
+        const galleryItems = document.querySelectorAll('.gallery-item img');
+        const expandedImg = document.getElementById('expanded-img');
+        
+        galleryItems.forEach(item => {
+            item.addEventListener('click', function() {
+                expandedImg.src = this.src;
+                expandedImg.alt = this.alt;
+                imageViewer.style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            });
+        });
+        
+        // Form submission
+        const bookingForm = document.querySelector('.booking-form');
+        bookingForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your booking request! We will contact you shortly.');
+            bookingModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            this.reset();
+        });
+        
+        // Social widget functionality
+        const socialIcon = document.getElementById('social-icon');
+        const socialPanel = document.getElementById('social-panel');
+        
+        socialIcon.addEventListener('click', function(e) {
+            e.stopPropagation();
+            socialPanel.classList.toggle('active');
+        });
+        
+        // Close social panel when clicking elsewhere
+        document.addEventListener('click', function() {
+            socialPanel.classList.remove('active');
+        });
+        
+        // Prevent social panel from closing when clicking inside it
+        socialPanel.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
+    </script>
+</body>
+</html>
